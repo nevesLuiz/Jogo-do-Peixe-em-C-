@@ -1,0 +1,265 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+
+        {
+
+            //criar o lago
+            String[] lago = new String[51];
+            String nada = null;
+            int posicao = 0;
+
+            for (int i = 0; i < 5; i++)
+            {
+                for (int a = 0; a < 10; a++)
+                {
+                    lago[posicao] = nada + i + a;
+
+                    posicao++;
+
+                }
+            }
+            //jogadores
+
+            int numJogadores = 0;
+
+            void InsiraJogadores()
+            {
+                Console.WriteLine("Insira o número de jogadores:");
+                numJogadores = int.Parse(Console.ReadLine());
+            }
+            InsiraJogadores();
+            while (numJogadores < 1)
+            {
+                Console.WriteLine("Número invalido!");
+                InsiraJogadores();
+            }
+
+            int jogador = 1;
+
+            String[] nomeJogador = new String[numJogadores];
+
+            for (int i = 0; i < numJogadores; i++)
+            {
+                Console.WriteLine("Insira o nome do jogador " + jogador + ":");
+                nomeJogador[i] = Console.ReadLine();
+                jogador++;
+
+            }
+
+            Console.WriteLine();
+
+
+
+            //inserindo os peixes
+
+            int numPeixes = 0;
+
+            void InsiraPeixes()
+            {
+                Console.WriteLine("Insira o número de peixes (até 50):");
+                numPeixes = int.Parse(Console.ReadLine());
+            }
+            InsiraPeixes();
+            while (numPeixes > 50 || numPeixes < 1)
+            {
+                Console.WriteLine("Número invalido!");
+                InsiraPeixes();
+            }
+
+            //////////////////////////////////////////
+
+            Random r = new Random();
+            String posicaoAleatoria = null;
+            String aposicaoAtual = null;
+            for (int a = 1; a <= numPeixes; a++)
+            {
+                posicaoAleatoria = r.Next(0, 5) + "" + r.Next(0, 10);
+                for (int i = 0; i < lago.Length; i++)
+                {
+                    aposicaoAtual = lago[i];
+                    if (aposicaoAtual.Equals(posicaoAleatoria + "+"))
+                    {
+                        numPeixes++;
+                        break;
+                    }
+
+                    if (aposicaoAtual.Length != 3)
+                    {
+                        if (aposicaoAtual.Equals(posicaoAleatoria))
+                        {
+                            lago[i] = posicaoAleatoria + "+";
+                            break;
+                        }
+
+                    }
+
+                }
+            }
+
+            //quantidade de iscas
+
+            int iscas = 0;
+            void InsiraIscas()
+            {
+                Console.WriteLine("Insira o número de iscas:");
+                iscas = int.Parse(Console.ReadLine());
+            }
+            InsiraIscas();
+            while (iscas < 0)
+            {
+                Console.WriteLine("Número invalido!");
+                InsiraIscas();
+            }
+
+
+            Console.WriteLine();
+
+            //montando o tabuleiro
+            void montarTabuleiro()
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    for (int linha = 0; linha < 10; linha++)
+                    {
+                        Console.Write("[" + i + "," + linha + "]");
+                    }
+                    Console.WriteLine();
+                }
+                Console.WriteLine();
+            }
+
+            //pontuacao
+
+            int[] pontos = new int[numJogadores];
+
+            //rodadas
+
+            String jogada = null;
+
+            for (int i = 0; i < iscas; i++)
+            {
+                montarTabuleiro();
+                int rodada = i;
+                Console.WriteLine("Rodada " + (rodada + 1));
+                Console.WriteLine();
+                for (int a = 0; a < numJogadores; a++)
+                {
+                    Console.WriteLine("vez de " + nomeJogador[a] + ":");
+                    Console.Write("Insira a posição (xy):");
+                    jogada = Console.ReadLine();
+                    for (int b = 0; b < lago.Length; b++)
+                    {
+                        if (lago[b].Equals(jogada))
+                        {
+                            Console.WriteLine(nomeJogador[a] + " erro feiokkkkkk");
+                            lago[b] = lago[b] + "x";
+                            break;
+                        }
+                        if ((jogada + "+").Equals(lago[b]))
+                        {
+                            Console.WriteLine(nomeJogador[a] + " pescou! nice!");
+                            pontos[a] = pontos[a] + 1;
+
+                            lago[b] = lago[b].Replace("+", "-");
+                            break;
+                        }
+                        if ((jogada + "-").Equals(lago[b]))
+                        {
+                            Console.WriteLine(nomeJogador[a] + " tentou pescar onde tinha um peixe");
+                            break;
+                        }
+                        if ((jogada + "x").Equals(lago[b]))
+                        {
+                            Console.WriteLine(nomeJogador[a] + " erro junto com alguémKKKKKKK");
+                            break;
+                        }
+                    }
+                }
+                Console.WriteLine();
+            }
+            //mostrando pontos
+            for (int i = 0; i < numJogadores; i++)
+            {
+                if (pontos[i] == 0)
+                {
+                    Console.WriteLine(nomeJogador[i] + " Vish, não foi dessa vez kkkk");
+                }
+                else if (pontos[i] == 1)
+                {
+                    Console.WriteLine(nomeJogador[i] + " pescou " + pontos[i] + " peixe!");
+                }
+                else
+                    Console.WriteLine(nomeJogador[i] + " pescou " + pontos[i] + " peixes!");
+            }
+            Console.WriteLine();
+            //vendo quem ganho
+            int maisPontos = pontos[0];
+            String ganhador = nomeJogador[0];
+            for (int i = 1; i < numJogadores; i++)
+            {
+                if (pontos[i] > maisPontos)
+                {
+                    maisPontos = pontos[i];
+                    ganhador = nomeJogador[i];
+                }
+            }
+            int empate = 0;
+            if (maisPontos != 0)
+            {
+                //checando por empate
+                for (int i = 0; i < pontos.Length; i++)
+                {
+                    if (pontos[i] == maisPontos)
+                    {
+                        empate++;
+                    }
+                }
+                if (!(empate >= 2))
+                {
+                    Console.WriteLine(ganhador + " é o pescador supremo");
+                }
+                else
+                {
+                    Console.WriteLine("parece que temos um empate, hmmm... acho que o ganhador é o pesqueiro então");
+                }
+            }
+            else
+            {
+                Console.WriteLine("ninguém ganho!!");
+            }
+
+            Console.WriteLine();
+
+            ///////////////////////////
+
+
+            /////////////////////
+            //ver resultado
+
+            Console.WriteLine("Deseja ver o resultado do lago? (s/n)");
+
+            String pergunta = Console.ReadLine();
+            Console.WriteLine();
+            if (pergunta.Equals("s"))
+            {
+                Console.WriteLine("Resultado do lago:");
+                Console.WriteLine();
+                for (int i = 0; i < lago.Length; i++)
+                {
+                    Console.WriteLine(lago[i]);
+                }
+            }
+            Console.Read();
+        }
+    }
+}
+        
